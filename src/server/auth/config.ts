@@ -1,6 +1,8 @@
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { type DefaultSession, type NextAuthConfig } from "next-auth";
 import DiscordProvider from "next-auth/providers/discord";
+import CredentialsProvider from "next-auth/providers/credentials";
+import bcrypt from "bcryptjs";
 
 import { db } from "@/server/db";
 
@@ -32,6 +34,26 @@ declare module "next-auth" {
  */
 export const authConfig = {
   providers: [
+    CredentialsProvider({
+      name: "Credentials",
+      credentials: {
+        username: { label: "아이디", type: "text" },
+        password: { label: "비밀번호", type: "password" },
+      },
+      async authorize(credentials) {
+        if (!credentials?.username || !credentials?.password) return null;
+        const user = await db.user.findUnique({
+          where: { username: credentials.username as string },
+        });
+        if (!user || !user.password) return null;
+        const valid = await bcrypt.compare(
+          credentials.password as string,
+          user.password as string,
+        );
+        if (!valid) return null;
+        return { id: user.id, name: user.username ?? undefined };
+      },
+    }),
     DiscordProvider,
     /**
      * ...add more providers here.
