@@ -12,6 +12,7 @@ export const authRouter = createTRPCRouter({
       const user = await ctx.db.user.create({
         data: { username: input.username, password: hashed },
       });
+
       return { id: user.id, username: user.username };
     }),
   login: publicProcedure

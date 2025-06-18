@@ -1,4 +1,4 @@
-import { todoRouter } from "@/server/api/routers/post";
+import { todoRouter } from "@/server/api/routers/todo";
 import { authRouter } from "@/server/api/routers/auth";
 import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
 

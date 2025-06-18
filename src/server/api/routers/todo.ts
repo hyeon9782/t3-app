@@ -9,7 +9,7 @@ import {
 export const todoRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
     return ctx.db.todo.findMany({
-      where: { createdBy: { id: ctx.session.user.id } },
+      where: { createdBy: { id: ctx.session?.user.id } },
       orderBy: { createdAt: "desc" },
     });
   }),
